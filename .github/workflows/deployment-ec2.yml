@@ -29,6 +29,9 @@ jobs:
       - name: pull postgres image from dockerhub
         run: docker pull postgres:latest
 
+      - name: delete old container if present
+        run: docker rm -f postgres
+
       - name: run postgres
         run: docker run --name my_postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=USERS -p 5432:5432 -d postgres
 
