@@ -17,7 +17,7 @@ app.get('/users', async (req, res, next) => {
         res.json(result.rows);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error');
+        res.status(500).json(err);
     }
 })
 
