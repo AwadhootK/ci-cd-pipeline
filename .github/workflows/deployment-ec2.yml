@@ -33,7 +33,7 @@ jobs:
         run: docker rm -f postgres-container || true
 
       - name: run postgres
-        run: docker run --name postgres-container -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=USERS -p 5432:5432 -d postgres
+        run: docker run --name postgres-container -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=USERS -p 5432:5432 -d postgres || true
 
   deploy:
     needs: [build, database-setup]
