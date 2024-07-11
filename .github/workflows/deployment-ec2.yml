@@ -33,4 +33,7 @@ jobs:
         run: docker rm -f nodejs-app-container || true
 
       - name: Run Docker container
-        run: docker run -p 3000:3000 --name nodejs-app-container awadhootk/web-app:latest
+        run: docker run -p 3000:3000 --name nodejs-app-container -d awadhootk/web-app:latest
+
+      - name: ip address
+        run: curl ifconfig.me
