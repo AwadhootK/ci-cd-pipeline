@@ -1,0 +1,51 @@
+name: ci-cd-ec2-deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v3
+
+      - name: login to docker hub
+        uses: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: build docker image
+        uses: docker build -t awadhootk/web-app .
+
+      - name: publish image to docker hub
+        uses: docker push awadhootk/web-app:latest
+
+  # database-setup:
+  #   needs: build
+  #   runs-on: [aws-ec2]
+  #   steps:
+  #     - name: pull postgres image from dockerhub
+  #       uses: docker pull postgres:latest
+
+  #     - name: run postgres image
+  #       uses: docker run --name my_postgres -e POSTGRES_USER=${{ secrets.POSTGRES_USERNAME }} -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} -e POSTGRES_DB=${{ secrets.POSTGRES_DATABASE }} -p 5432:5432 -d postgres
+
+  #     - name: connect to db
+  #       uses: psql -h localhost -U ${{ secrets.POSTGRES_USERNAME }} -d ${{ secrets.POSTGRES_DATABASE }}
+
+  #     - name: create table
+  #       uses: 
+
+  deploy:
+    needs: [build]
+    runs-on: [aws-ec2]
+    steps:
+      - name: pull image from dockerhub
+        uses: docker pull awadhootk/web-app:latest
+
+      - name: delete old container
+        uses: docker rm -f nodejs-app-container
+
+      - name: run docker container
+        uses: docker run -p 3000:3000 -name nodejs-app-container awadhootk6/web-app:latest
