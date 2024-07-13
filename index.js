@@ -1,3 +1,4 @@
+
 const express = require('express');
 const cors = require('cors');
 const { pool, createTable } = require('./db');
@@ -33,7 +34,7 @@ app.post('/saveuser', async (req, res, next) => {
         );
         console.log('inserted!');
         return res.json(result.rows);
-    } catch (error) {
+    } catch (err) {
         console.error(err.message);
         return res.status(500).json(err);
     }
@@ -50,9 +51,9 @@ app.post('/edituser', async (req, res, next) => {
         );
         console.log('updated!');
         return res.json(result.rows);
-    } catch (error) {
-        console.error(error.message);
-        return res.status(500).send('Server error');
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send(err);
     }
 });
 
