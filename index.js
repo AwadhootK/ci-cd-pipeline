@@ -21,6 +21,24 @@ app.get('/users', async (req, res, next) => {
     }
 });
 
+app.post('/saveuser', async (req, res, next) => {
+    try {
+
+        const { username, email } = req.body;
+
+        console.log(username, email);
+        const result = await pool.query(
+            'INSERT INTO users(name, email) VALUES ($1, $2)',
+            [username, email]
+        );
+        console.log('inserted!');
+        return res.json(result.rows);
+    } catch (error) {
+        console.error(err.message);
+        return res.status(500).json(err);
+    }
+})
+
 app.post('/edituser', async (req, res, next) => {
     try {
         const { username, email } = req.body;
