@@ -32,10 +32,10 @@ jobs:
         run: docker rmi awadhootk/web-app:latest || true
 
       - name: Delete old container (if exists)
-        run: docker rm -f nodejs-app-container || true
+        run: docker rm -f postgres-container || true
 
       - name: Delete old container (if exists)
-        run: docker rmi nodejs-app-container || true
+        run: docker rmi postgres:latest || true
 
       - name: remove existing docker network
         run: docker network rm my-network || true
