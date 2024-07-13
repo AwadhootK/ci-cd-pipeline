@@ -1,10 +1,10 @@
 const { Pool } = require('pg');
 
 const pool = new Pool({
-    user: 'postgres',
-    host: 'postgres-container',
-    database: 'USERS',
-    password: 'secret',
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
     port: 5432,
 });
 
@@ -23,23 +23,21 @@ INSERT INTO users (name, email) VALUES
 ON CONFLICT (email) DO NOTHING;
 `;
 
-const initializeDatabase = async () => {
+const createTable = async () => {
     try {
         const client = await pool.connect();
-        console.log('Connected to DB!');
-
         await client.query(createTableQuery);
-        console.log('Table created or already exists.');
+        console.log('Table created successfully!');
 
         await client.query(insertDataQuery);
-        console.log('Initial data inserted.');
+        console.log('Data entered successfully!');
 
         client.release();
     } catch (err) {
-        console.error('Error executing query', err.stack);
+        console.error('Error creating table', err);
     } finally {
         await pool.end();
     }
 };
 
-module.exports = { pool, initializeDatabase };
+module.exports = { pool, createTable };

@@ -1,15 +1,19 @@
 const express = require('express');
 const cors = require('cors');
-const { pool, initializeDatabase } = require('./db');
+const { pool, createTable } = require('./db');
 
 const app = express();
+
+await createTable();
 
 app.use(cors());
 app.use(express.json());
 
+
 app.get('/ping', (req, res, next) => {
     res.send('pong');
 });
+
 
 app.get('/users', async (req, res, next) => {
     try {
@@ -17,7 +21,7 @@ app.get('/users', async (req, res, next) => {
         res.json(result.rows);
     } catch (err) {
         console.error(err.message);
-        res.status(500).json(err);
+        return res.status(500).json(err);
     }
 })
 
@@ -58,5 +62,4 @@ app.post('/deleteuser', async (req, res, next) => {
 
 app.listen(3000, () => {
     console.log("Server started on port 3000!");
-    initializeDatabase();
 });

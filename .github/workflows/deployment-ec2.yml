@@ -21,7 +21,7 @@ jobs:
 
       - name: Publish image to Docker Hub
         run: docker push awadhootk/web-app:latest
-  
+
   docker-network:
     needs: build
     runs-on: [aws-ec2]
@@ -40,7 +40,14 @@ jobs:
         run: docker rm -f postgres-container || true
 
       - name: run postgres
-        run: docker run --name postgres-container --network my-network -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=USERS -p 5432:5432 -d postgres || true
+        run: docker run \
+          --name postgres-container \
+          --network my-network \
+          -e POSTGRES_USER=postgres \
+          -e POSTGRES_PASSWORD=secret \
+          -v postgres-data:/var/lib/postgresql/data \
+          -p 5432:5432 \
+          -d postgres
 
   deploy:
     needs: [build, database-setup]
@@ -53,4 +60,12 @@ jobs:
         run: docker rm -f nodejs-app-container || true
 
       - name: Run Docker container
-        run: docker run -p 3000:3000 --name nodejs-app-container --network my-network -d awadhootk/web-app:latest
+        run: docker run \
+          --name nodejs-app-container \
+          --network my-network \
+          -e DB_HOST=postgres-container \
+          -e DB_USER=postgres \
+          -e DB_PASSWORD=secret \
+          -e DB_NAME=postgres \
+          -p 3000:3000 \
+          -d awadhootk/web-app:latest
