@@ -35,8 +35,6 @@ const createTable = async () => {
         client.release();
     } catch (err) {
         console.error('Error creating table', err);
-    } finally {
-        await pool.end();
     }
 };
 
