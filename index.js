@@ -59,12 +59,12 @@ app.post('/edituser', async (req, res, next) => {
 
 app.post('/deleteuser', async (req, res, next) => {
     try {
-        const { username } = req.body;
+        const { id } = req.body;
 
         console.log(username);
         const result = await pool.query(
-            'DELETE FROM users WHERE name = $1',
-            [username]
+            'DELETE FROM users WHERE id = $1',
+            [id]
         );
         console.log('deleted!');
         return res.json(result.rows);
