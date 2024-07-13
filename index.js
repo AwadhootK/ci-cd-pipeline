@@ -4,16 +4,12 @@ const { pool, createTable } = require('./db');
 
 const app = express();
 
-await createTable();
-
 app.use(cors());
 app.use(express.json());
-
 
 app.get('/ping', (req, res, next) => {
     res.send('pong');
 });
-
 
 app.get('/users', async (req, res, next) => {
     try {
@@ -23,7 +19,7 @@ app.get('/users', async (req, res, next) => {
         console.error(err.message);
         return res.status(500).json(err);
     }
-})
+});
 
 app.post('/edituser', async (req, res, next) => {
     try {
@@ -59,7 +55,18 @@ app.post('/deleteuser', async (req, res, next) => {
     }
 });
 
+const startServer = async () => {
+    try {
+        await createTable();
+        console.log('Table created or already exists.');
 
-app.listen(3000, () => {
-    console.log("Server started on port 3000!");
-});
+        app.listen(3000, () => {
+            console.log("Server started on port 3000!");
+        });
+    } catch (err) {
+        console.error('Error during table creation', err);
+        process.exit(1);
+    }
+};
+
+startServer();
