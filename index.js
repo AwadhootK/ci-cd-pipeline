@@ -61,16 +61,16 @@ app.post('/deleteuser', async (req, res, next) => {
     try {
         const { id } = req.body;
 
-        console.log(username);
+        console.log(id);
         const result = await pool.query(
             'DELETE FROM users WHERE id = $1',
             [id]
         );
         console.log('deleted!');
         return res.json(result.rows);
-    } catch (error) {
-        console.error(error.message);
-        return res.status(500).send('Server error');
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send(err);
     }
 });
 
