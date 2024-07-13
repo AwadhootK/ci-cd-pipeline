@@ -43,8 +43,7 @@ jobs:
         run: docker rm -f postgres-container || true
 
       - name: run postgres
-        run: docker run \
-          --name postgres-container \
+        run: docker run --name postgres-container \
           --network my-network \
           -e POSTGRES_USER=postgres \
           -e POSTGRES_PASSWORD=secret \
