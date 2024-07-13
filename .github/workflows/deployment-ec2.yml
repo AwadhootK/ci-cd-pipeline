@@ -22,13 +22,28 @@ jobs:
       - name: Publish image to Docker Hub
         run: docker push awadhootk/web-app:latest
 
-  docker-network:
-    needs: build
+  docker-cleanup:
     runs-on: [aws-ec2]
     steps:
+      - name: remove existing docker container
+        run: docker rm -f nodejs-app-container || true
+
+      - name: remove existing docker image
+        run: docker rmi awadhootk/web-app:latest || true
+
+      - name: Delete old container (if exists)
+        run: docker rm -f nodejs-app-container || true
+
+      - name: Delete old container (if exists)
+        run: docker rmi nodejs-app-container || true
+
       - name: remove existing docker network
         run: docker network rm my-network || true
 
+  docker-network:
+    needs: [build, docker-cleanup]
+    runs-on: [aws-ec2]
+    steps:
       - name: create docker network
         run: docker network create my-network
 
@@ -39,9 +54,6 @@ jobs:
       - name: pull postgres image from dockerhub
         run: docker pull postgres:latest
 
-      - name: delete old container if present
-        run: docker rm -f postgres-container || true
-
       - name: run postgres
         run: docker run --name postgres-container --network my-network -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=secret -v postgres-data:/var/lib/postgresql/data -p 5432:5432 -d postgres
 
@@ -51,9 +63,6 @@ jobs:
     steps:
       - name: Pull image from Docker Hub
         run: docker pull awadhootk/web-app:latest
-
-      - name: Delete old container (if exists)
-        run: docker rm -f nodejs-app-container || true
 
       - name: Run Docker container
         run: docker run --name nodejs-app-container --network my-network -e DB_HOST=postgres-container -e DB_USER=postgres -e DB_PASSWORD=secret -e DB_NAME=postgres -p 3000:3000 -d awadhootk/web-app:latest
